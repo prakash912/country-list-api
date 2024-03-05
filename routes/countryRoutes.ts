@@ -13,4 +13,4 @@ router.get('/sorted', countryController.getCountriesSorted);
 
 
 
-module.exports = router;
+export default router;

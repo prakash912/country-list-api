@@ -1,16 +1,17 @@
 // app.js
 require('dotenv').config();
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const countryRoutes = require('./routes/countryRoutes');
-const connectDB = require('./db');
+import express from 'express';
+import bodyParser from 'body-parser';
+import countryRoutes from './routes/countryRoutes';
+import connectDB from './db';
 
 const app = express();
 const PORT = process.env.PORT || 8001;
 
 // Connect to MongoDB
-connectDB(process.env.MONGO_URL);
+console.log(process.env.MONGO_URL,"process.env.MONGO_URL")
+connectDB(process.env.MONGO_URL ?? 'default-mongo-url');
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());

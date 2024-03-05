@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Country, Neighbor } from '../models/Country';
-import { Document } from 'mongoose';
+import { Document, SortOrder } from 'mongoose';
 import { ObjectId } from 'mongodb';
 
 interface NeighborDocument extends Document {
@@ -9,14 +9,14 @@ interface NeighborDocument extends Document {
   createdAt: Date;
 }
 
-export const getAllCountries = async (req: Request, res: Response) => {
+export  const getAllCountries = async (req: Request, res: Response) => {
   try {
     const countries = await Country.find();
     res.status(200).json({
       message: 'Country list',
       data: { list: countries }
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({ message: 'Internal Server Error', data: {} });
   }
 };
@@ -30,7 +30,7 @@ export const addCountry = async (req: Request, res: Response) => {
       return await newCountry.save();
     }));
     res.status(201).json({ message: 'Countries added successfully', data: { countries: savedCountries } });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({ message: 'Internal Server Error', data: {} });
   }
 };
@@ -46,7 +46,7 @@ export const getCountryDetail = async (req: Request, res: Response) => {
         data: { country }
       });
     }
-  } catch (error) {
+  } catch (error:any) {
     res.status(500).json({ message: 'Internal Server Error', data: {} });
   }
 };
@@ -61,7 +61,7 @@ export const getCountryNeighbors = async (req: Request, res: Response) => {
       const neighbors = await Neighbor.find({ countryId: countryId.toString() }).populate('neighborId');
       res.status(200).json({ message: 'Country neighbors', data: { list: neighbors.map((neighbor: any) => neighbor.neighborId) } });
     }
-  } catch (error) {
+  } catch (error:any) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
@@ -99,7 +99,7 @@ export const addNeighbors = async (req: Request, res: Response) => {
     } else {
       res.status(200).json({ message: 'Neighbors added successfully', data: { neighbors: successfulAdditions }, errors });
     }
-  } catch (error) {
+  } catch (error:any) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
@@ -108,7 +108,7 @@ export const addNeighbors = async (req: Request, res: Response) => {
 export const getCountriesSorted = async (req: Request, res: Response) => {
   try {
     let sortBy = req.query.sort_by || 'a_to_z';
-    let sortCriteria;
+    let sortCriteria: string | { [key: string]: SortOrder | { $meta: any; }; } | [string, SortOrder][] | null | undefined;
     switch (sortBy) {
       case 'a_to_z':
         sortCriteria = { name: 1 };
@@ -137,7 +137,7 @@ export const getCountriesSorted = async (req: Request, res: Response) => {
       message: 'Country list',
       data: { list: countries }
     });
-  } catch (error) {
+  } catch (error:any) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error', data: { error } });
   }
@@ -204,7 +204,7 @@ export const getAllCountriesPaginated = async (req: Request, res: Response) => {
         total: totalCountries
       }
     });
-  } catch (error) {
+  } catch (error:any) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error', data: {} });
   }
